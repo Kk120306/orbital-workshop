@@ -87,7 +87,7 @@ Your app is now running at `http://localhost:3000`.
 ```bash
 # 1. Clone the repo and checkout the starter branch
 git clone https://github.com/YOUR_REPO_URL
-cd orbital-nextjs-workshop
+cd orbital-workshop
 git checkout part-1-setup
 
 # 2. Install dependencies
