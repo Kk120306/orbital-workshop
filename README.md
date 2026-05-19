@@ -1,38 +1,26 @@
-# Next.js Workshop — Part 1: Setup & Tour
+# Next.js Workshop — Part 2: Routing & Components
 
 > **Orbital 2026** · Developer Student Club NUS
-> Branch: `part-1-setup`
+> Branch: `part-2-routing`
 
 ---
 
-## Starting from scratch (optional reading)
+## What we cover in Part 2
 
-If you want to create a new Next.js project from scratch outside of this workshop, run:
-
-```bash
-npx create-next-app@latest my-app
-```
-
-You'll be prompted to choose a few options. For a setup similar to this repo, select:
-
-- TypeScript → **Yes**
-- ESLint → **Yes**
-- Tailwind CSS → **Yes**
-- `src/` directory → **No**
-- App Router → **Yes**
-- Customize import alias → **No**
-
-Then `cd my-app && npm run dev` to get started.
+- **File-based routing** — how Next.js turns folders into URL routes
+- **`layout.tsx`** — the root layout that wraps every page
+- **Server components** — run on the server, can `await` data, send zero JS to the browser
+- **Client components** — run in the browser, needed for `useState`, `useEffect`, event handlers
+- **Composing them together** — a server component can render a client component as a child
 
 ---
 
-## Getting started (follow along in the workshop)
+## Getting started
 
-### 1. Clone the repo
+### 1. Clone the repo & switch to this branch
 
 ```bash
-git clone https://github.com/YOUR_REPO_URL
-cd orbital-nextjs-workshop
+git checkout part-2-routing
 ```
 
 ### 2. Install dependencies
@@ -41,27 +29,13 @@ cd orbital-nextjs-workshop
 npm install
 ```
 
-### 3. Set up your environment variables
-
-Copy the example env file:
-
-```bash
-cp .env.example .env
-```
-
-Then open `.env` and fill in your database URL (you'll get this from Neon in Part 3):
-
-```
-DATABASE_URL="your-neon-connection-string-here"
-```
-
-### 4. Run the development server
+### 3. Run the development server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser. You should see the app running.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
@@ -70,21 +44,58 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. You should 
 ```
 orbital-nextjs-workshop/
   app/
+    layout.tsx            # root layout — wraps every page (great for nav/footer)
     page.tsx              # home page → route: /
+    about/
+      page.tsx            # about page → route: /about
     expenses/
-      page.tsx            # expense list → route: /expenses
-      actions.ts          # server actions (we'll fill these in during the workshop)
+      page.tsx            # expense list → route: /expenses (hardcoded for now)
   components/
     ExpenseCard.tsx       # pre-built card UI for displaying an expense
-    ExpenseForm.tsx       # form for adding expenses (we'll build this in Part 4)
+    sample/
+      ServerGreeting.tsx  # server component demo — async, no JS sent to browser
+      LikeButton.tsx      # client component demo — uses useState, runs in browser
   lib/
-    db.ts                 # Prisma client singleton
+    db.ts                 # Prisma client singleton (used in Part 3)
   prisma/
     schema.prisma         # database schema — defines the Expense model
   .env.example            # template for your environment variables
-  .gitignore              # includes .env so secrets don't get committed
   README.md               # you're reading it!
 ```
+
+---
+
+## Key concepts
+
+### Routing
+
+Every `page.tsx` inside `app/` becomes a route. The folder path maps directly to the URL:
+
+| File | Route |
+|------|-------|
+| `app/page.tsx` | `/` |
+| `app/about/page.tsx` | `/about` |
+| `app/expenses/page.tsx` | `/expenses` |
+
+`layout.tsx` wraps all child pages automatically — no imports needed.
+
+### Server vs Client components
+
+**Server components** (the default — no directive needed):
+- Run only on the server
+- Can be `async` and `await` data (DB queries, fetch calls)
+- Secrets (API keys, DB URLs) stay on the server
+- Zero JavaScript is sent to the browser for this component
+
+**Client components** (`"use client"` at the top of the file):
+- Run in the browser
+- Required for `useState`, `useEffect`, `onClick`, and other interactivity
+- Bundled and shipped to the browser as JavaScript
+- Cannot directly access server-only resources
+
+The recommended pattern: server components fetch and pass data down; client components handle interactivity.
+
+---
 
 ## Questions?
 
