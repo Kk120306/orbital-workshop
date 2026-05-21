@@ -1,93 +1,99 @@
-# Next.js Workshop — Part 1: Setup & Tour
+# Next.js Workshop — Part 5: Deployment
 
 > **Orbital 2026** · Developer Student Club NUS
-> Branch: `part-1-setup`
+> Branch: `part-5-deployment`
+
+# Deployment Fixes
+
+## 1. Fixed TypeScript Error in `ExpenseForm.tsx`
+
+The `amount` field caused a TypeScript type mismatch during Vercel deployment because HTML input values are stored as strings by default.
+
+### Fix
+
+Stored the `amount` state as a string:
+
+```tsx
+const [amount, setAmount] = useState<string>(
+  initialData?.amount?.toString() || ""
+);
+```
+
+Then converted it back into a number during form submission:
+
+```tsx
+onSubmit({
+  title,
+  amount: parseFloat(String(amount)),
+  date
+});
+```
+
+### Why
+
+`<input type="number" />` still returns string values in React, so explicit conversion is required for TypeScript and Prisma compatibility.
 
 ---
 
-## Starting from scratch (optional reading)
+## 2. Auto-Generated Prisma Client on Vercel
 
-If you want to create a new Next.js project from scratch outside of this workshop, run:
+Vercel deployment initially failed because Prisma Client was not generated during the build process.
 
-```bash
-npx create-next-app@latest my-app
+### Fix
+
+Added a `postinstall` script inside `package.json`:
+
+```json
+"postinstall": "prisma generate"
 ```
 
-You'll be prompted to choose a few options. For a setup similar to this repo, select:
+### Why
 
-- TypeScript → **Yes**
-- ESLint → **Yes**
-- Tailwind CSS → **Yes**
-- `src/` directory → **No**
-- App Router → **Yes**
-- Customize import alias → **No**
-
-Then `cd my-app && npm run dev` to get started.
+This ensures Prisma Client and database types are automatically generated whenever dependencies are installed on Vercel.
 
 ---
 
-## Getting started (follow along in the workshop)
+## 3. Added `vercel.json`
 
-### 1. Clone the repo
+Created a `vercel.json` configuration file:
 
-```bash
-git clone https://github.com/YOUR_REPO_URL
-cd orbital-nextjs-workshop
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "npm run build"
+}
 ```
 
-### 2. Install dependencies
+### Why
 
-```bash
-npm install
-```
+This explicitly tells Vercel:
 
-### 3. Set up your environment variables
+- The project uses Next.js
+- Which build command to run
+- How the deployment should be configured
 
-Copy the example env file:
-
-```bash
-cp .env.example .env
-```
-
-Then open `.env` and fill in your database URL (you'll get this from Neon in Part 3):
-
-```
-DATABASE_URL="your-neon-connection-string-here"
-```
-
-### 4. Run the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser. You should see the app running.
+This helps prevent incorrect framework detection during deployment.
 
 ---
 
-## Folder structure
+# Deploying to Vercel
 
+1. Sign up or log in to Vercel.
+2. Click **Add New Project**.
+3. Select the GitHub repository containing the Expense Tracker project.
+4. Add the required environment variables (e.g. `DATABASE_URL`).
+5. Click **Deploy**.
+6. Vercel will automatically:
+   - Clone the repository
+   - Install dependencies
+   - Generate Prisma Client
+   - Build the Next.js application
+   - Show build logs/errors if any occur
+7. If the build is successful, Vercel will generate a live deployment URL/custom domain for the application.
+
+Example:
+
+```txt
+https://expense-tracker.vercel.app
 ```
-orbital-nextjs-workshop/
-  app/
-    page.tsx              # home page → route: /
-    expenses/
-      page.tsx            # expense list → route: /expenses
-      actions.ts          # server actions (we'll fill these in during the workshop)
-  components/
-    ExpenseCard.tsx       # pre-built card UI for displaying an expense
-    ExpenseForm.tsx       # form for adding expenses (we'll build this in Part 4)
-  lib/
-    db.ts                 # Prisma client singleton
-  prisma/
-    schema.prisma         # database schema — defines the Expense model
-  .env.example            # template for your environment variables
-  .gitignore              # includes .env so secrets don't get committed
-  README.md               # you're reading it!
-```
-
-## Questions?
-
-Reach out to us on Telegram:
-- Kai — @kai120306
-- Shermaine — @soheepyying
