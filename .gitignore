@@ -1,41 +1,23 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# This file is very important! 
+# It prevents sensitive information from being committed to the repository.
 
 # dependencies
-/node_modules
-/.pnp
-.pnp.js
+node_modules/
+
+# environment variables
+.env
+.env.local
+.env.*.local
+
+# Next.js build output
 .next/
+out/
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
+# Prisma generated client
+generated/
 
 # misc
 .DS_Store
-*.pem
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-.env*.local
-.env
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# AI tools
+# Claude Config
 .claude
