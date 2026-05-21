@@ -18,12 +18,18 @@ type ExpenseFormProps = {
 export default function ExpenseForm({ onSubmit, initialData = {}, submitLabel = "Add Expense" }: ExpenseFormProps) {
   // Sets up state variables for each form field, initialized from initialData if provided
   const [title, setTitle] = useState(initialData?.title || "");
-  const [amount, setAmount] = useState(initialData?.amount || "");
+  /* 
+      Amount is stored as a string for the input, but converted to number on submit
+        - In React, the value of an <input type="number" /> is always a string—even if the user types a number. 
+        - This is because all HTML input values are strings by default. 
+  */
+  const [amount, setAmount] = useState<string>(initialData?.amount?.toString() || "");
+
   const [date, setDate] = useState(initialData?.date ? initialData.date.slice(0, 10) : ""); // YYYY-MM-DD format for date input
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    onSubmit({ title, amount: parseFloat(amount), date });
+    onSubmit({ title, amount: parseFloat(String(amount)), date });
     // Resets all form fields to empty after submission, clearing the form for the next entry.
     setTitle("");
     setAmount("");
