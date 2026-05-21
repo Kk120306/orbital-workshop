@@ -1,7 +1,9 @@
-# Step-by-Step Guide: Building CRUD Features for Expense Tracker (Next.js + Prisma + PostgreSQL)
 
-This guide explains the files, structure, and code added to implement full CRUD (Create, Read, Update, Delete) features for your expense tracker app.
+# Next.js Workshop — Part 4: CRUD
 
+> **Orbital 2026** · Developer Student Club NUS
+> Branch: `part-4-CRUD`
+> 
 
 ---
 
