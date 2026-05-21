@@ -1,93 +1,123 @@
-# Next.js Workshop — Part 1: Setup & Tour
+# Step-by-Step Guide: Building CRUD Features for Expense Tracker (Next.js + Prisma + PostgreSQL)
 
-> **Orbital 2026** · Developer Student Club NUS
-> Branch: `part-1-setup`
+This guide explains the files, structure, and code added to implement full CRUD (Create, Read, Update, Delete) features for your expense tracker app.
 
----
-
-## Starting from scratch (optional reading)
-
-If you want to create a new Next.js project from scratch outside of this workshop, run:
-
-```bash
-npx create-next-app@latest my-app
-```
-
-You'll be prompted to choose a few options. For a setup similar to this repo, select:
-
-- TypeScript → **Yes**
-- ESLint → **Yes**
-- Tailwind CSS → **Yes**
-- `src/` directory → **No**
-- App Router → **Yes**
-- Customize import alias → **No**
-
-Then `cd my-app && npm run dev` to get started.
 
 ---
 
-## Getting started (follow along in the workshop)
+## 1. API Routes for CRUD Operations
 
-### 1. Clone the repo
+### a. List & Create Expenses (GET, POST)
+- **File:** `app/api/expenses/route.ts`
+- **Purpose:**
+  - `GET`: Fetch all expenses
+  - `POST`: Add a new expense
+- **Use Case:** 
+  - Used for actions on the entire collection (e.g., list all expenses with GET, create a new expense with POST)
+  - No dynamic parameter in the URL
 
-```bash
-git clone https://github.com/YOUR_REPO_URL
-cd orbital-nextjs-workshop
-```
-
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Set up your environment variables
-
-Copy the example env file:
-
-```bash
-cp .env.example .env
-```
-
-Then open `.env` and fill in your database URL (you'll get this from Neon in Part 3):
-
-```
-DATABASE_URL="your-neon-connection-string-here"
-```
-
-### 4. Run the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser. You should see the app running.
+### b. Update & Delete Expense (PATCH, DELETE)
+- **File:** `app/api/expenses/[id]/route.ts`
+- **Purpose:**
+  - `PATCH`: Update an expense by ID
+  - `DELETE`: Delete an expense by ID
+- **Use Case:** 
+  - Used for actions on a specific expense (e.g., update or delete a single expense by its ID)
+  - [id] is a dynamic route segment, so you can access the id parameter in your handler
+        E.g. /api/expenses/<id> (e.g., /api/expenses/abc123)
 
 ---
 
-## Folder structure
+## 2. Frontend Components
+
+### a. ExpenseCard (Previously Created)
+- **File:** `components/ExpenseCard.tsx`
+- **Purpose:** Displays a single expense (title, amount, date)
+
+### b. ExpenseForm
+- **File:** `components/ExpenseForm.tsx`
+- **Purpose:** Form to add a new expense (or edit in future)
+
+---
+
+## 3. Page Rendering
+
+### c. ExpensesClientList
+- **File:** `app/expenses/client-list.tsx`
+- **Purpose:**
+  - Fetches expenses from API
+  - Renders list of `ExpenseCard`s
+  - Handles add, edit and delete actions
+
+### d. Expenses Page
+- **File:** `app/expenses/page.tsx`
+- **Purpose:**
+  - Main page for expenses
+  - Renders the `ExpensesClientList` component
+
+---
+
+## 4. Data Validation Check + Frontend Error Display
+
+### a. Server-side validation
+- **File:** `app/api/expenses/route.ts`
+- **File:** `app/api/expenses/[id]/route.ts`
+- **Logic:**
+  - Add logic to check if the data has been passed over and in the correct format e.g. if (!title || typeof title !== 'string')
+  - If the data was not correctly passed, throw an error using NextResponse.json with the error & status code
+
+### b. Client-side validation
+- **File:** `app\expenses\client-list.tsx`
+- **Logic:**
+  - Use try catch blocks to catch errors
+  - console.error() to log the problem
+    
+---
+
+## 5. Navbar
+
+### a. Navbar
+- **File:** `components\Navbar.tsx`
+- **Purpose:** Displays a header to route between pages (home, expenses, about)
+
+### b. Page
+- **File:** `app\layout.tsx`
+- **Purpose:** Update to use the Navbar
+    
+---
+
+## 6. File Structure After CRUD Setup
 
 ```
-orbital-nextjs-workshop/
-  app/
-    page.tsx              # home page → route: /
+app/
+  api/
     expenses/
-      page.tsx            # expense list → route: /expenses
-      actions.ts          # server actions (we'll fill these in during the workshop)
-  components/
-    ExpenseCard.tsx       # pre-built card UI for displaying an expense
-    ExpenseForm.tsx       # form for adding expenses (we'll build this in Part 4)
-  lib/
-    db.ts                 # Prisma client singleton
-  prisma/
-    schema.prisma         # database schema — defines the Expense model
-  .env.example            # template for your environment variables
-  .gitignore              # includes .env so secrets don't get committed
-  README.md               # you're reading it!
+      route.ts           # GET (list), POST (create)
+      [id]/
+        route.ts         # PATCH (update), DELETE (delete)
+  expenses/
+    page.tsx            # Main expenses page
+    client-list.tsx     # Client-side CRUD logic
+components/
+  ExpenseCard.tsx       # Expense display card
+  ExpenseForm.tsx       # Add/edit expense form
+  Navbar.tsx       # Navbar
+prisma/
+  schema.prisma         # Expense model
 ```
 
-## Questions?
+---
 
-Reach out to us on Telegram:
-- Kai — @kai120306
-- Shermaine — @soheepyying
+## 7. How the CRUD Flow Works
+
+1. **User visits `/expenses`**
+2. `ExpensesClientList` fetches all expenses from `/api/expenses` (GET)
+3. User adds an expense using `ExpenseForm` (POST to `/api/expenses`)
+4. User deletes an expense (DELETE to `/api/expenses/[id]`)
+5. (Optional) User edits an expense (PATCH to `/api/expenses/[id]`)
+
+---
+
+
+
+
