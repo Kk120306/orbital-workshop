@@ -33,6 +33,7 @@ Then `cd my-app && npm run dev` to get started.
 ```bash
 git clone https://github.com/YOUR_REPO_URL
 cd orbital-nextjs-workshop
+git checkout part-1-setup
 ```
 
 ### 2. Install dependencies
