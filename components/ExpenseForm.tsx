@@ -23,7 +23,7 @@ export default function ExpenseForm({ onSubmit, initialData = {}, submitLabel = 
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    onSubmit({ title, amount: parseFloat(amount), date });
+    onSubmit({ title, amount: parseFloat(amount as string), date });
     // Resets all form fields to empty after submission, clearing the form for the next entry.
     setTitle("");
     setAmount("");
